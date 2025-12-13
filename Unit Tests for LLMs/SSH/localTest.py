@@ -87,7 +87,7 @@ def main():
             msg = res.choices[0].message.content
             
             # Remove backticks if present
-            msg = msg.replace("```", "")
+            msg = msg.replace("`", "")
             
             message = {"content": msg, "role": 'assistant'}
 

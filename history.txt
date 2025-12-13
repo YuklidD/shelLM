@@ -206,3 +206,16 @@ sophia@cybersecurity:~$ pwd	<2025-12-13 12:55:34.161271>
 `
 /home/sophia
 sophia@cybersecurity:~$
+Here the session stopped. Now you will start it again from the beginning with the same user. You must respond just with starting message and nothing more. Make sure you use same file and folder names. Ignore date-time in <>. This is not your concern.
+The session continues in following lines.
+
+
+Last login: 2025-12-13 12:56:51.972549 from 192.168.1.100
+olivia@itdepartment:~$
+ ls	<2025-12-13 12:56:55.490722>
+
+Machine_Learning  application_security.py  system_administration.md  IT_Projects  Network_Configurations  .git  database_management.csv  cloud_computing.ipynb
+olivia@itdepartment:~$
+ pwd	<2025-12-13 12:57:01.703855>
+/home/olivia
+olivia@itdepartment:~$
