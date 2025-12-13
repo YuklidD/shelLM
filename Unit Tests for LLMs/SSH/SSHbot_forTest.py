@@ -88,6 +88,10 @@ def main():
 
             # Get message as dict from response
             msg = res.choices[0].message.content
+            
+            # Remove backticks if present
+            msg = msg.replace("```", "")
+            
             message = {"content": msg, "role": 'assistant'}
 
             if "$cd" in message["content"] or "$ cd" in message["content"]:

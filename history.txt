@@ -193,3 +193,16 @@ drwxr-xr-x  7 emily emily 4096 Dec 12 15:42 .git
 -rwxr-xr-x  1 emily emily 1024 Dec 12 10:50 web_backend.py
 emily@datascience:~$
 ```
+Here the session stopped. Now you will start it again from the beginning with the same user. You must respond just with starting message and nothing more. Make sure you use same file and folder names. Ignore date-time in <>. This is not your concern.
+The session continues in following lines.
+
+
+Last login: 2025-12-13 12:55:18.188477 from 192.168.1.100
+sophia@cybersecurity:~$
+ ls	<2025-12-13 12:55:23.442402>
+`
+Network_Security  threat_analysis.py  incident_response.md  Cyber_Threats  Security_Reports  .git  vulnerability_assessment.csv  penetration_testing.ipynb
+sophia@cybersecurity:~$ pwd	<2025-12-13 12:55:34.161271>
+`
+/home/sophia
+sophia@cybersecurity:~$
