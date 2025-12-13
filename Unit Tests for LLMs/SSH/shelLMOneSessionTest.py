@@ -1,4 +1,4 @@
-from anthropic import Anthropic
+from groq import Groq
 from dotenv import dotenv_values
 import argparse
 from datetime import datetime
@@ -11,7 +11,7 @@ import sys
 arg = sys.argv[1]
 
 config = dotenv_values(".env")
-client = Anthropic(api_key=config["ANTHROPIC_API_KEY"])
+client = Groq(api_key=config["GROQ_API_KEY"])
 today = datetime.now()
 
 history = open("history.txt", "a+", encoding="utf-8")
@@ -75,26 +75,17 @@ def main():
 
         # Get model response
         try:
-            # Prepare messages for Claude API - system message goes separately
-            user_messages = [msg for msg in messages if msg["role"] != "system"]
-            system_message = next((msg["content"] for msg in messages if msg["role"] == "system"), "")
+            # Prepare messages for Groq API
             
-            res = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=900,
-                system=system_message,
-                messages=user_messages
+            res = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=messages,
+                max_tokens=800
             )
 
             # Get message as dict from response
-            msg = res.content[0].text
+            msg = res.choices[0].message.content
             message = {"content": msg, "role": 'assistant'}
-
-            # token_temp = len(encoding.encode(message["content"]))/1000
-            # token_count += token_temp
-            # output_price += token_temp * 0.004
-
-            # print("Output: " + str(output_price) + "$\n")
 
             if "$cd" in message["content"] or "$ cd" in message["content"]:
                 message["content"] = message["content"].split("\n")[1]

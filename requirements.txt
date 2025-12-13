@@ -1,4 +1,7 @@
 anthropic
+google-generativeai
+groq
+openai
 python-dotenv
 pyyaml
 requests
