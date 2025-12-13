@@ -1,4 +1,4 @@
-openai
+anthropic
 python-dotenv
 pyyaml
 requests

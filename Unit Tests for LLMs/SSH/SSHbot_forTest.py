@@ -1,4 +1,4 @@
-import openai
+from anthropic import Anthropic
 from dotenv import dotenv_values
 import argparse
 from datetime import datetime
@@ -6,7 +6,6 @@ import yaml
 from time import sleep
 import random
 import os
-import tiktoken
 import socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +15,7 @@ server.listen()
 connection, address = server.accept()
 
 config = dotenv_values("../.env")
-openai.api_key = config["OPENAI_API_KEY"]
+client = Anthropic(api_key=config["ANTHROPIC_API_KEY"])
 today = datetime.now()
 
 history = open("history.txt", "a+", encoding="utf-8")
@@ -79,15 +78,19 @@ def main():
 
         # Get model response
         try:
-            res = openai.chat.completions.create(
-                model = "ft:gpt-3.5-turbo-1106:stratosphere-laboratory::8KS2seKA", #"ft:gpt-3.5-turbo-0613:stratosphere-laboratory::8G6QadzM", #ft:gpt-3.5-turbo-0613:stratosphere-laboratory::8DVYqT1E",
-                messages = messages,
-                temperature = 0.0,
-                max_tokens = 900
+            # Prepare messages for Claude API - system message goes separately
+            user_messages = [msg for msg in messages if msg["role"] != "system"]
+            system_message = next((msg["content"] for msg in messages if msg["role"] == "system"), "")
+            
+            res = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=900,
+                system=system_message,
+                messages=user_messages
             )
 
             # Get message as dict from response
-            msg = res.choices[0].message.content
+            msg = res.content[0].text
             message = {"content": msg, "role": 'assistant'}
 
             if "$cd" in message["content"] or "$ cd" in message["content"]:

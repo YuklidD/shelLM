@@ -6,7 +6,7 @@ The extension of shelLM to a larger deception framework we call VelLMes can be f
 
 ## Features
 
-`shelLM` was developed in Python and currently uses Open AI GPT models. Among its key features are:
+`shelLM` was developed in Python and currently uses Anthropic's Claude models. Among its key features are:
 
 1. The content from a previous session is carried over to a new session to ensure consistency.
 2. It uses a combination of techniques for prompt engineering, including chain-of-thought.
@@ -26,7 +26,7 @@ The installation steps are as follows:
 ~$
 ~$ # Create env file
 ~$ cp env_TEMPLATE .env
-~$ # Edit env file to add OPEN AI API KEY
+~$ # Edit env file to add ANTHROPIC API KEY
 ~$ vim .env
 ```
 
@@ -48,7 +48,7 @@ This version of shelLM can simulate an SSH honeypot.
 
 Yes. This is part of ongoing research focused on more services.
 
-**Is this just a wrapper for Open AI?**
+**Is this just a wrapper for Anthropic's Claude?**
 
 No. The core of the tool are the Prompts, that have been engineered specially to guarantee a correct behavior. Also shelLM provides other features like session management, error handling, log storage, and other key features needed in honeypots.
 

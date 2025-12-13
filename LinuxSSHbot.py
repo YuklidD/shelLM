@@ -1,4 +1,4 @@
-import openai
+from anthropic import Anthropic
 from dotenv import dotenv_values
 import argparse
 from datetime import datetime
@@ -8,7 +8,7 @@ import random
 import os
 
 config = dotenv_values(".env")
-openai.api_key = config["OPENAI_API_KEY"]
+client = Anthropic(api_key=config["ANTHROPIC_API_KEY"])
 today = datetime.now()
 
 history = open("history.txt", "a+", encoding="utf-8")
@@ -50,14 +50,18 @@ def main():
         
         logs = open("history.txt", "a+", encoding="utf-8")
         try:
-            res = openai.chat.completions.create(
-                model="gpt-3.5-turbo-16k",
-                messages = messages,
-                temperature = 0.0,
-                max_tokens = 800
+            # Prepare messages for Claude API - system message goes separately
+            user_messages = [msg for msg in messages if msg["role"] != "system"]
+            system_message = next((msg["content"] for msg in messages if msg["role"] == "system"), "")
+            
+            res = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=800,
+                system=system_message,
+                messages=user_messages
             )
 
-            msg = res.choices[0].message.content
+            msg = res.content[0].text
             message = {"content": msg, "role": 'assistant'}
 
             if "$cd" in message["content"] or "$ cd" in message["content"]:

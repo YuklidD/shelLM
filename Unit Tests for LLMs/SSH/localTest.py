@@ -1,4 +1,4 @@
-import openai
+from anthropic import Anthropic
 from dotenv import dotenv_values
 import argparse
 from datetime import datetime
@@ -6,14 +6,12 @@ import yaml
 from time import sleep
 import random
 import os
-import tiktoken
 import sys
-from litellm import completion
 
 arg = sys.argv[1]
 
 config = dotenv_values(".env")
-openai.api_key = config["OPENAI_API_KEY"]
+client = Anthropic(api_key=config["ANTHROPIC_API_KEY"])
 today = datetime.now()
 
 history = open("history.txt", "a+", encoding="utf-8")
@@ -77,14 +75,19 @@ def main():
 
         # Get model response
         try:
-            res = completion(
-                model="ollama/llama2",                 
-                messages = messages,
-                api_base="http://localhost:11434"
+            # Prepare messages for Claude API - system message goes separately
+            user_messages = [msg for msg in messages if msg["role"] != "system"]
+            system_message = next((msg["content"] for msg in messages if msg["role"] == "system"), "")
+            
+            res = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=900,
+                system=system_message,
+                messages=user_messages
             )
 
             # Get message as dict from response
-            msg = res.choices[0].message.content
+            msg = res.content[0].text
             message = {"content": msg, "role": 'assistant'}
 
             if "$cd" in message["content"] or "$ cd" in message["content"]:
