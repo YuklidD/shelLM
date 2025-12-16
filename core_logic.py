@@ -13,7 +13,11 @@ class LLMTerminal:
         # Initialize Groq client
         # Note: In a real K8s env, you might want to handle missing keys more gracefully
         api_key = self.config.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-        self.client = Groq(api_key=api_key)
+        try:
+            self.client = Groq(api_key=api_key)
+        except Exception as e:
+            print(f"Failed to init Groq client: {e}", flush=True)
+            self.client = None
         
         self.session_id = session_id
         self.history = []
@@ -66,6 +70,9 @@ class LLMTerminal:
         timestamped_input = f"{user_input}\t<{datetime.now()}>\n"
         self.messages.append({"role": "user", "content": timestamped_input})
         self.log_interaction("user", user_input)
+
+        if not self.client:
+            return "Error: LLM API Key not configured. Please check server logs."
 
         try:
             res = self.client.chat.completions.create(

@@ -26,7 +26,7 @@ class HoneypotServer(paramiko.ServerInterface):
     def check_auth_password(self, username, password):
         # In a real honeypot, you might want to accept all passwords
         # or specific ones. Here we accept everything to let the attacker in.
-        print(f"Auth attempt: {username}:{password}")
+        print(f"Auth attempt: {username}:{password}", flush=True)
         return paramiko.AUTH_SUCCESSFUL
 
     def get_allowed_auths(self, username):
@@ -236,6 +236,17 @@ def handle_connection(client_sock, addr):
                 response = terminal.get_response(clean_command)
                 # Ensure proper line endings for SSH terminal
                 response = response.replace("\n", "\r\n")
+                
+                # Fix: Remove trailing newline if present so cursor stays on prompt line
+                if response.endswith("\r\n"):
+                    response = response[:-2]
+                elif response.endswith("\n"):
+                    response = response[:-1]
+                
+                # Fix: Ensure space after prompt '$'
+                if response.endswith("$") or response.endswith("$"): # Check for $
+                     response += " "
+                
                 chan.send(response)
             
             # Check for exit condition (if LLM simulates logout)
@@ -244,19 +255,24 @@ def handle_connection(client_sock, addr):
                 break
 
     except Exception as e:
-        print(f"Connection error: {e}")
+        print(f"Connection error: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
     finally:
         transport.close()
 
-def start_server(port=2222):
+def start_server(port=None):
+    if port is None:
+        port = int(os.getenv("SSH_PORT", 2222))
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(('0.0.0.0', port))
     sock.listen(100)
-    print(f"Listening for SSH connections on port {port}...")
+    print(f"Listening for SSH connections on port {port}...", flush=True)
 
     while True:
         client, addr = sock.accept()
+        print(f"Accepted connection from {addr}", flush=True)
         threading.Thread(target=handle_connection, args=(client, addr)).start()
 
 if __name__ == "__main__":
